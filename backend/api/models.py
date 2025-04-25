@@ -30,7 +30,6 @@ class LigneFacture(models.Model):
     facture = models.ForeignKey(Facture, related_name='lignes', on_delete=models.CASCADE)
     description = models.CharField(max_length=200)
     quantite = models.IntegerField()
-    tva = models.FloatField()
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2)
     
     def __str__(self):
@@ -56,10 +55,13 @@ class Paiement(models.Model):
         return f"Paiement de {self.montant} pour la facture {self.facture}"
 
 class ParametresEntreprise(models.Model):
+    nom_complet_gerant = models.CharField(max_length=200)
+    tva_intracom = models.FloatField(null=True, blank=True)
     nom_entreprise = models.CharField(max_length=100)
     siret = models.CharField(max_length=14)
     adresse = models.TextField()
     email_contact = models.EmailField()
+    telephone_contact = models.CharField(max_length=20, null=True, blank=True)
     logo = models.ImageField(upload_to='logos/', null=True, blank=True)
 
     def __str__(self):

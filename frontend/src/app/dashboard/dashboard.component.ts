@@ -211,14 +211,18 @@ export class DashboardComponent implements OnInit {
       // Agréger les dépenses par mois
       const monthlyExpenses = this.aggregateExpensesByMonth(this.depenses);
       const monthlyPaiements = this.aggregatePaiementsByMonth(this.paiements);
-
   
-      // Extraire les labels (mois) et les montants
-      const labels = Object.keys(monthlyExpenses); // Les mois sous forme de clé
-      const expensesData = Object.values(monthlyExpenses); // Les totaux des dépenses pour chaque mois
-      const paiementsData = Object.values(monthlyPaiements);
+      // Obtenir les mois présents dans les dépenses et les paiements
+      const allMonths = new Set([...Object.keys(monthlyExpenses), ...Object.keys(monthlyPaiements)]);
   
-      // Si les labels et les données sont corrects, continue avec la création du graphique
+      // Convertir Set en tableau et trier les mois
+      const labels = Array.from(allMonths).sort();
+  
+      // Créer les données des dépenses et paiements pour les mois
+      const expensesData = labels.map(month => monthlyExpenses[month] || 0);
+      const paiementsData = labels.map(month => monthlyPaiements[month] || 0);
+  
+      // Création du graphique
       new Chart(ctx2, {
         type: 'bar',
         data: {
@@ -290,6 +294,7 @@ export class DashboardComponent implements OnInit {
       console.error('Élément canvas pour depenses_graphique introuvable');
     }
   }
+  
 
   aggregateExpensesByMonth(expenses: Depense[]): { [key: string]: number } {
     const monthlyExpenses: { [key: string]: number } = {};
@@ -310,13 +315,17 @@ export class DashboardComponent implements OnInit {
     const monthlyPaiements: { [key: string]: number } = {};
   
     paiements.forEach(paiement => {
-      const month = paiement.date_paiement.substring(0, 7); // Extrait le mois 'YYYY-MM'
+      const month = paiement.date_paiement.substring(0, 7); // Extrait le mois (2024-04)
+
+  
       if (!monthlyPaiements[month]) {
         monthlyPaiements[month] = 0;
       }
-  
-      monthlyPaiements[month] += isNaN(parseFloat(paiement.montant)) ? 0 : parseFloat(paiement.montant);
+      // Conversion explicite de paiement.montant en nombre
+      monthlyPaiements[month] += isNaN(parseFloat(paiement.montant)) ? 0 : parseFloat(paiement.montant.replace('€', '').replace(',', '.'));
     });
+  
     return monthlyPaiements;
   }
+  
 }
