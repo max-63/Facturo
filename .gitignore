@@ -1,0 +1,13 @@
+# Ignorer les dossiers de build
+build/
+dist/
+
+# Ignorer les fichiers générés par les IDE
+.vscode/
+.idea/
+
+# Ignorer node_modules
+node_modules/
+
+# Ignorer les fichiers logs
+*.log

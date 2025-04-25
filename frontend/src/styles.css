@@ -1,0 +1,16 @@
+body {
+    background-color: #fff8f8 !important; /* gris clair comme Bootstrap */
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: Arial, sans-serif !important;
+  }
+  
+  .dashboard {
+    padding-bottom: 50px !important;
+  }
+  
+  .row {
+    margin: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+  }

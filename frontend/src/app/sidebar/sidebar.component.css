@@ -1,0 +1,58 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #3498db;
+    padding: 20px;
+    z-index: 9999;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Ombre pour donner de la profondeur */
+    border-radius: 0 10px 10px 0; /* Arrondir les bords de la sidebar */
+    transition: all 0.3s ease; /* Transition fluide pour le changement de taille et d'effet hover */
+}
+
+.div-btn-sidebar {
+    width: 100%;
+    background-color: #3498db;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition fluide pour hover */
+}
+
+.div-btn-sidebar a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 10px 0;
+    transition: color 0.3s ease;
+}
+
+.div-btn-sidebar a:hover {
+    color: #f1c40f; /* Couleur au survol */
+    transform: translateX(10px);
+}
+
+.div-btn-sidebar:hover {
+    background-color: #2980b9; /* Couleur de fond du bouton lors du survol */
+    cursor: pointer;
+    transform: scale(1.05); /* Effet de zoom lors du survol */
+}
+
+.sidebar .div-btn-sidebar:last-child {
+    margin-bottom: 0; /* Enlever la marge pour le dernier élément */
+}
+
+/* Optionnel : pour ajouter une animation de fermeture au survol */
+.sidebar:hover {
+    width: 270px; /* Élargir la sidebar au survol */
+}
+
