@@ -30,6 +30,7 @@ export class LoginRegisterComponent {
     this.apiService.registerUser(data).subscribe({
       next: (response) => {
         console.log('Register success:', response);
+        localStorage.setItem('auth_token', response.access);
         alert('Inscription réussie ✅');
       },
       error: (error) => {
@@ -49,7 +50,6 @@ export class LoginRegisterComponent {
       next: (response) => {
         console.log('Login success:', response);
         alert('Connexion réussie ✅');
-        this.authService.saveToken(response.token);  // Sauvegarde du token
         this.router.navigate(['/dashboard']); // 👈 Redirection ici
       },
       error: (error) => {

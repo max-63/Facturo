@@ -116,3 +116,10 @@ def login_user(request):
         return Response({'message': 'Connexion réussie ✅'}, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    # Tu peux personnaliser ici le comportement ou le serializer utilisé pour obtenir le token
+    pass

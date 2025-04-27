@@ -3,10 +3,20 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
+
+
+
+interface DecodedToken {
+  username: string;
+  exp: number;  // Tu peux ajouter d'autres champs du token si besoin
+}
+
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthService {
 
   private apiUrl = 'http://127.0.0.1:8000/api';  // Change l'URL selon ton API
@@ -36,10 +46,6 @@ export class AuthService {
       );
   }
 
-  // Sauvegarder le token après la connexion
-  saveToken(token: string): void {
-    localStorage.setItem('auth_token', token);
-  }
 
   // Déconnexion
   logout(): void {
@@ -47,17 +53,11 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  // En-têtes HTTP avec le token d'authentification
-  getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('auth_token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  }
 
   // Gestion des erreurs
   private handleError(error: any): Observable<any> {
     console.error('Une erreur s\'est produite', error);
     throw error;  // Tu peux personnaliser cette fonction pour gérer mieux les erreurs
   }
+
 }

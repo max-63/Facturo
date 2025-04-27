@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';  // Assurez-vous d'importer AuthService
 
 // Définition des types des objets (dictionnaires, tableaux)
 export interface Client {
@@ -68,22 +69,25 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
+
+
   // Récupérer tous les clients
+  // Récupérer tous les clients avec le token d'authentification
   getClients(): Observable<Client[]> {
     return this.http.get<Client[]>(`${this.apiUrl}/clients/`);
   }
 
-  // Récupérer toutes les factures
+  // Récupérer toutes les factures avec le token d'authentification
   getFactures(): Observable<Facture[]> {
     return this.http.get<Facture[]>(`${this.apiUrl}/factures/`);
   }
 
   getDepenses(): Observable<Depense[]> {
-    return this.http.get<Depense[]>(`${this.apiUrl}/depenses/`)
+    return this.http.get<Depense[]>(`${this.apiUrl}/depenses/`);
   }
 
   getPaiements(): Observable<Paiement[]> {
-    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements/`)
+    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements/`);
   }
 
   getUsers(): Observable<Users[]> {

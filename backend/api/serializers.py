@@ -49,3 +49,21 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import exceptions
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Personnalisation du serializer pour inclure plus d'informations
+    ou modifier le comportement lors de la création du token.
+    """
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Tu peux ajouter des informations personnalisées dans la réponse ici
+        # Par exemple, ajouter le nom d'utilisateur, etc.
+        data['username'] = self.user.username
+        return data

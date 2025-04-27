@@ -11,9 +11,6 @@ import { CommonModule } from '@angular/common';  // Importation du CommonModule
 import { NgChartsModule  } from 'ng2-charts';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
-
-
-
 @NgModule({
   declarations: [
     //pas de composant standalone  

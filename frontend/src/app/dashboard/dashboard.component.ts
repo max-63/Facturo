@@ -6,6 +6,9 @@ import { Client, Facture, Depense } from '../api.service'; // Les interfaces son
 import { ArcElement, CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement, DoughnutController, PieController, BarController, BarElement,Tooltip, Legend, Title } from 'chart.js';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { forkJoin } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 Chart.register([
   CategoryScale,
@@ -26,8 +29,10 @@ Chart.register([
   standalone: true, // ✅ ESSENTIEL
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  imports: [CommonModule, RouterModule, SidebarComponent]
+  imports: [CommonModule, RouterModule, SidebarComponent],
 })
+
+
 export class DashboardComponent implements OnInit {
 
   clients: Client[] = [];
