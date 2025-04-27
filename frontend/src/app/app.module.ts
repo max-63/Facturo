@@ -10,10 +10,13 @@ import { routes } from './app.routes';  // Import des routes
 import { CommonModule } from '@angular/common';  // Importation du CommonModule
 import { NgChartsModule  } from 'ng2-charts';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { FormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
-    //pas de composant standalone
+    //pas de composant standalone  
   ],
   imports: [
     BrowserModule,
@@ -24,6 +27,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     SidebarComponent,
     DashboardComponent, 
     AppComponent,
+    FormsModule,
+
   ],
   providers: []
   // bootstrap: [AppComponent]

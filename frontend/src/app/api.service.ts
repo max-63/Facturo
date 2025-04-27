@@ -1,5 +1,3 @@
-// src/app/api.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,20 +5,20 @@ import { Observable } from 'rxjs';
 // Définition des types des objets (dictionnaires, tableaux)
 export interface Client {
   id: number;
-  name: string; // Correspond au champ 'nom' de l'API Django
+  name: string;
   email: string;
-  telephone: string; // Ajouté ici pour correspondre au modèle Django
-  adresse: string; // Ajouté ici pour correspondre au modèle Django
-  date_ajout: string; // Ajouté pour correspondre à la date d'ajout du client
+  telephone: string;
+  adresse: string;
+  date_ajout: string;
 }
 
 export interface Facture {
   id: number;
-  numero: string;  // Peut-être ajouté pour correspondre à la facture Django
-  montant_total: number; // Vérifie que le champ 'montant_total' est bien renvoyé
-  date_emission: string; // Correspond à 'date_emission' de Django
-  date_echeance: string;  // Ajouté pour correspondre au modèle Django
-  statut: string; // Ajouté pour correspondre au modèle Django
+  numero: string;
+  montant_total: number;
+  date_emission: string;
+  date_echeance: string;
+  statut: string;
   client_id: number;
 }
 
@@ -33,12 +31,32 @@ export interface Depense {
   fournisseur: string;
 }
 
-export interface Paiement{
+export interface Paiement {
   id: number;
   montant: string;
   date_paiement: string;
   moyen: string;
   facture: number;
+}
+
+export interface Entreprise {
+  id: number;
+  nom_complet_gerant: string;
+  nom_entreprise: string;
+  siret: string;
+  adresse: string;
+  email_contact: string;
+  telephone_contact: string;
+  logo: string;
+}
+
+export interface Users {
+  id: number;
+  username: string;
+  salt: string;
+  password: string;
+  email: string;
+  is_active: boolean;
 }
 
 @Injectable({
@@ -68,13 +86,23 @@ export class ApiService {
     return this.http.get<Paiement[]>(`${this.apiUrl}/paiements/`)
   }
 
-  // Ajouter un client
-  addClient(client: Client): Observable<Client> {
-    return this.http.post<Client>(`${this.apiUrl}/clients/`, client);
+  getUsers(): Observable<Users[]> {
+    return this.http.get<Users[]>(`${this.apiUrl}/users/`)
   }
 
-  // Ajouter une facture
-  addFacture(facture: Facture): Observable<Facture> {
-    return this.http.post<Facture>(`${this.apiUrl}/factures/`, facture);
+  getParametresEntreprise(): Observable<Entreprise[]> {
+    return this.http.get<Entreprise[]>(`${this.apiUrl}/parametres/`)
+  }
+
+  getPasswordSalt(username: string): Observable<{ salt: string }> {
+    return this.http.get<{ salt: string }>(`${this.apiUrl}/get_salt?username=${username}`);
+  }
+  
+  registerUser(data: { username: string, password: string, email: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register/`, data);
+  }
+
+  loginUser(data: { username: string, password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login/`, data);
   }
 }

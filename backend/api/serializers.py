@@ -1,7 +1,7 @@
 # backend/api/serializers.py
 
 from rest_framework import serializers
-from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise
+from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise, Users
 
 class ClientSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='nom')  # Renommer 'nom' en 'name'
@@ -37,3 +37,15 @@ class ParametresEntrepriseSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParametresEntreprise
         fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        field = '__all__'
+    def create(self, validated_data):
+        user = Users.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        return user

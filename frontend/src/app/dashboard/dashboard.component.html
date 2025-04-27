@@ -63,11 +63,11 @@
                   <td
                     [ngStyle]="{
                       color:
-                        facture.statut === 'payée'
+                        removeAccents(facture.statut) === 'payee'
                           ? 'green'
-                          : facture.statut === 'envoyée'
+                          : removeAccents(facture.statut) === 'envoyee'
                           ? 'orange'
-                          : facture.statut === 'brouillon'
+                          : removeAccents(facture.statut) === 'brouillon'
                           ? 'red'
                           : 'black'
                     }"

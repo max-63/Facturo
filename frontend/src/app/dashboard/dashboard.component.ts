@@ -72,6 +72,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+
+  removeAccents(text: string): string {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+  
   // Charger les clients depuis l'API
   loadClients(): void {
     this.apiService.getClients().subscribe(
@@ -127,9 +132,9 @@ export class DashboardComponent implements OnInit {
 
   // Compter les factures par statut
   countFacturesByStatut(): void {
-    this.factureCount.payee = this.factures.filter(facture => facture.statut === 'payée').length;
-    this.factureCount.envoyee = this.factures.filter(facture => facture.statut === 'envoyée').length;
-    this.factureCount.brouillon = this.factures.filter(facture => facture.statut === 'brouillon').length;
+    this.factureCount.payee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'payee').length;
+    this.factureCount.envoyee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'envoyee').length;
+    this.factureCount.brouillon = this.factures.filter(facture => this.removeAccents(facture.statut) === 'brouillon').length;
   }
 
   // Ajouter à ton composant TypeScript

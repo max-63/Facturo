@@ -1,6 +1,16 @@
 from django.db import models
 
+
+class Users(models.Model):
+    username = models.CharField(max_length=200)
+    salt = models.CharField(max_length=12)
+    password = models.CharField(max_length=200)
+    email = models.EmailField()
+    is_active = models.BooleanField()
+
+
 class Client(models.Model):
+    appartient_a_user = models.ForeignKey(Users, on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
     email = models.EmailField(blank=True)
     telephone = models.CharField(max_length=20, blank=True)
@@ -31,11 +41,12 @@ class LigneFacture(models.Model):
     description = models.CharField(max_length=200)
     quantite = models.IntegerField()
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2)
-    
+    tva = models.FloatField()
     def __str__(self):
         return self.description
 
 class Depense(models.Model):
+    appartient_a_user = models.ForeignKey(Users, on_delete=models.CASCADE)
     categorie = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     montant = models.DecimalField(max_digits=10, decimal_places=2)
@@ -55,8 +66,8 @@ class Paiement(models.Model):
         return f"Paiement de {self.montant} pour la facture {self.facture}"
 
 class ParametresEntreprise(models.Model):
+    appartient_a_user = models.ForeignKey(Users, on_delete=models.CASCADE)
     nom_complet_gerant = models.CharField(max_length=200)
-    tva_intracom = models.FloatField(null=True, blank=True)
     nom_entreprise = models.CharField(max_length=100)
     siret = models.CharField(max_length=14)
     adresse = models.TextField()
