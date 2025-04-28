@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, Paiement } from '../api.service'; // Assurez-vous que ApiService existe et contient les méthodes getClients et getFactures
+import { ApiService, Paiement } from '../api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Client, Facture, Depense } from '../api.service'; // Les interfaces sont déjà importées
-import { ArcElement, CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement, DoughnutController, PieController, BarController, BarElement,Tooltip, Legend, Title } from 'chart.js';
+import { Client, Facture, Depense } from '../api.service';
+import { ArcElement, CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement, DoughnutController, PieController, BarController, BarElement, Tooltip, Legend, Title } from 'chart.js';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { forkJoin } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 Chart.register([
   CategoryScale,
@@ -23,16 +20,13 @@ Chart.register([
   Tooltip, Legend, Title
 ]);
 
-
 @Component({
   selector: 'app-dashboard',
-  standalone: true, // ✅ ESSENTIEL
+  standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   imports: [CommonModule, RouterModule, SidebarComponent],
 })
-
-
 export class DashboardComponent implements OnInit {
 
   clients: Client[] = [];
@@ -44,124 +38,80 @@ export class DashboardComponent implements OnInit {
     envoyee: 0,
     brouillon: 0
   };
+  username: string | null = null;
 
   constructor(private apiService: ApiService) { }
 
-  
   ngOnInit(): void {
-    this.loadData();
-  }
-  loadData(): void {
-    // Utilise forkJoin pour attendre que toutes les données soient récupérées avant de procéder
-    forkJoin({
-      clients: this.apiService.getClients(),
-      factures: this.apiService.getFactures(),
-      depenses: this.apiService.getDepenses(),
-      paiements: this.apiService.getPaiements()
-    }).subscribe({
-      next: (results) => {
-        // Une fois que toutes les données sont récupérées
-        this.clients = results.clients;
-        this.factures = results.factures;
-        this.depenses = results.depenses;
-        this.paiements = results.paiements;
-
-        // Après que toutes les données soient chargées, on procède à la création des graphiques
-        this.countFacturesByStatut();
-        this.createChartPie();
-        this.createChartBar();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la récupération des données:', error);
-      }
-    });
+    this.username = localStorage.getItem('username');
+    if (this.username) {
+      this.loadData();
+    } else {
+      console.error('Username non trouvé dans localStorage.');
+    }
   }
 
-
+  // Normaliser et enlever les accents
   removeAccents(text: string): string {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
+
+  // Charger les données (clients, factures, paiements, dépenses)
+  loadData(): void {
+    if (this.username !== null) {
+      forkJoin({
+        clients: this.apiService.getClients(this.username),
+        factures: this.apiService.getFactures(this.username),
+        depenses: this.apiService.getDepenses(this.username),
+        paiements: this.apiService.getPaiements(this.username)
+      }).subscribe({
+        next: (results) => {
+          this.clients = results.clients;
+          this.factures = results.factures;
+          this.depenses = results.depenses;
+          this.paiements = results.paiements;
   
-  // Charger les clients depuis l'API
-  loadClients(): void {
-    this.apiService.getClients().subscribe(
-      (data: Client[]) => {
-        this.clients = data;
-      },
-      error => {
-        console.error('Erreur lors de la récupération des clients', error);
-      }
-    );
-  }
-
-  // Charger les factures depuis l'API
-  loadFactures(): void {
-    this.apiService.getFactures().subscribe(
-      (data: Facture[]) => {
-        this.factures = data;
-        this.countFacturesByStatut();
-        this.createChartPie();
-      },
-      error => {
-        console.error('Erreur lors de la récupération des factures', error);
-      }
-    );
-  }
-
-  loadDepenses(): void {
-    this.apiService.getDepenses().subscribe(
-      (data: Depense[]) => {
-        this.depenses = data;
-        this.loadPaiments();
-        this.createChartBar();
-      },
-      error => {
-        console.error('Erreur lors de la récupération des factures', error);
-      }
-    )
-  }
-
-
-  loadPaiments(): void {
-    this.apiService.getPaiements().subscribe(
-      (data: Paiement[]) => {
-        this.paiements = data;
-      },
-      error => {
-        console.error('Erreur lors de la récupération des paiements', error);
-      }
-    );
-  }
+          // Comptage des factures par statut
+          this.countFacturesByStatut();
   
+          // Création des graphiques après chargement des données
+          this.createChartPie();
+          this.createChartBar();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la récupération des données:', error);
+        }
+      });
+    }
+  }
 
 
-  // Compter les factures par statut
   countFacturesByStatut(): void {
-    this.factureCount.payee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'payee').length;
-    this.factureCount.envoyee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'envoyee').length;
-    this.factureCount.brouillon = this.factures.filter(facture => this.removeAccents(facture.statut) === 'brouillon').length;
+    if (Array.isArray(this.factures)) {
+      this.factureCount.payee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'payee').length;
+      this.factureCount.envoyee = this.factures.filter(facture => this.removeAccents(facture.statut) === 'envoyee').length;
+      this.factureCount.brouillon = this.factures.filter(facture => this.removeAccents(facture.statut) === 'brouillon').length;
+    } else {
+      console.warn('Les données des factures ne sont pas un tableau');
+    }
   }
 
-  // Ajouter à ton composant TypeScript
+  // Calculer le total des factures envoyées ou payées
   calculateTotal(): number {
     let montant_total_final = 0;
     for (let facture of this.factures) {
-      // Vérifie si la facture est envoyée ou payée
       if (facture.statut === 'envoyée' || facture.statut === 'payée') {
         montant_total_final += parseFloat(facture.montant_total.toString());
       }
     }
     return montant_total_final;
   }
-  
-  
 
-
-  // Créer un graphique en secteurs
+  // Créer un graphique en secteurs pour les factures
   createChartPie(): void {
     const ctx = document.getElementById('Chart-factures') as HTMLCanvasElement;
     if (ctx) {
-      var PieChart = new Chart("Chart-factures", {
+      const PieChart = new Chart(ctx, {
         type: 'pie',
         data: {
           labels: ['Factures envoyées', 'Factures brouillons'],
@@ -180,7 +130,6 @@ export class DashboardComponent implements OnInit {
           }]
         },
         options: {
-          animation: true,
           responsive: true,
           plugins: {
             legend: {
@@ -203,7 +152,7 @@ export class DashboardComponent implements OnInit {
             },
             tooltip: {
               callbacks: {
-                label: function(tooltipItem) {
+                label: (tooltipItem) => {
                   return tooltipItem.label + ': ' + tooltipItem.raw + ' factures';
                 }
               }
@@ -214,25 +163,22 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
+  // Créer un graphique en barres pour les dépenses et paiements
   createChartBar(): void {
     const ctx2 = document.getElementById("depenses_graphique") as HTMLCanvasElement;
     if (ctx2) {
-      // Agréger les dépenses par mois
+      // Agréger les dépenses et paiements par mois
       const monthlyExpenses = this.aggregateExpensesByMonth(this.depenses);
       const monthlyPaiements = this.aggregatePaiementsByMonth(this.paiements);
   
-      // Obtenir les mois présents dans les dépenses et les paiements
+      // Fusionner et trier les mois
       const allMonths = new Set([...Object.keys(monthlyExpenses), ...Object.keys(monthlyPaiements)]);
-  
-      // Convertir Set en tableau et trier les mois
       const labels = Array.from(allMonths).sort();
   
-      // Créer les données des dépenses et paiements pour les mois
+      // Créer les données des dépenses et paiements
       const expensesData = labels.map(month => monthlyExpenses[month] || 0);
       const paiementsData = labels.map(month => monthlyPaiements[month] || 0);
   
-      // Création du graphique
       new Chart(ctx2, {
         type: 'bar',
         data: {
@@ -241,15 +187,15 @@ export class DashboardComponent implements OnInit {
             {
               label: 'Dépenses par mois',
               data: expensesData,
-              backgroundColor: 'rgba(255, 187, 0, 0.2)', // Couleur des barres
-              borderColor: 'rgb(255, 187, 0)', // Bord des barres
+              backgroundColor: 'rgba(255, 187, 0, 0.2)',
+              borderColor: 'rgb(255, 187, 0)',
               borderWidth: 1
             },
             {
               label: 'Paiements par mois',
               data: paiementsData,
-              backgroundColor: 'rgba(120, 255, 108, 0.2)', // Couleur des barres pour les paiements
-              borderColor: 'rgb(120, 255, 108)', // Bord des barres pour les paiements
+              backgroundColor: 'rgba(120, 255, 108, 0.2)',
+              borderColor: 'rgb(120, 255, 108)',
               borderWidth: 1,
             },
           ]
@@ -277,7 +223,7 @@ export class DashboardComponent implements OnInit {
             },
             tooltip: {
               callbacks: {
-                label: function(tooltipItem) {
+                label: (tooltipItem) => {
                   return tooltipItem.label + ': ' + tooltipItem.raw + ' €';
                 }
               }
@@ -286,56 +232,40 @@ export class DashboardComponent implements OnInit {
           scales: {
             y: {
               ticks: {
-                display: false // ❌ Masquer les ticks
+                display: false
               },
               grid: {
-                display: false // ❌ Optionnel : masque la grille horizontale
+                display: false
               }
             },
             x: {
               grid: {
-                display: false // ❌ Optionnel : masque la grille verticale
+                display: false
               }
             }
           }
         }
       });
-    } else {
-      console.error('Élément canvas pour depenses_graphique introuvable');
     }
   }
-  
 
+  // Agréger les dépenses par mois
   aggregateExpensesByMonth(expenses: Depense[]): { [key: string]: number } {
     const monthlyExpenses: { [key: string]: number } = {};
-  
     expenses.forEach(depense => {
       const month = depense.date.substring(0, 7); // Extrait le mois 'YYYY-MM'
-      if (!monthlyExpenses[month]) {
-        monthlyExpenses[month] = 0;
-      }
-      // Conversion explicite de depense.montant en nombre
-      monthlyExpenses[month] += isNaN(parseFloat(depense.montant)) ? 0 : parseFloat(depense.montant);
+      monthlyExpenses[month] = (monthlyExpenses[month] || 0) + parseFloat(depense.montant || '0');
     });
-  
     return monthlyExpenses;
   }
 
+  // Agréger les paiements par mois
   aggregatePaiementsByMonth(paiements: Paiement[]): { [key: string]: number } {
     const monthlyPaiements: { [key: string]: number } = {};
-  
     paiements.forEach(paiement => {
-      const month = paiement.date_paiement.substring(0, 7); // Extrait le mois (2024-04)
-
-  
-      if (!monthlyPaiements[month]) {
-        monthlyPaiements[month] = 0;
-      }
-      // Conversion explicite de paiement.montant en nombre
-      monthlyPaiements[month] += isNaN(parseFloat(paiement.montant)) ? 0 : parseFloat(paiement.montant.replace('€', '').replace(',', '.'));
+      const month = paiement.date_paiement.substring(0, 7); // Extrait le mois 'YYYY-MM'
+      monthlyPaiements[month] = (monthlyPaiements[month] || 0) + parseFloat(paiement.montant.replace('€', '').replace(',', '.'));
     });
-  
     return monthlyPaiements;
   }
-  
 }

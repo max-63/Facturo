@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 
@@ -20,12 +20,13 @@ interface DecodedToken {
 export class AuthService {
 
   private apiUrl = 'http://127.0.0.1:8000/api';  // Change l'URL selon ton API
+  private tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   constructor(private router: Router, private http: HttpClient) {}
 
   // Vérifie si l'utilisateur est authentifié
   isAuthenticated(): boolean {
-    return localStorage.getItem('auth_token') !== null;
+    return localStorage.getItem('jtw_token') !== null;
   }
 
   // Inscrire un nouvel utilisateur
@@ -46,10 +47,9 @@ export class AuthService {
       );
   }
 
-
   // Déconnexion
   logout(): void {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('jtw_token');
     this.router.navigate(['/login']);
   }
 

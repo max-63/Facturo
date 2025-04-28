@@ -21,16 +21,9 @@ export class LoginRegisterComponent {
   constructor(private apiService: ApiService, private router: Router, private authService: AuthService) {} // 👈 ajoute Router ici
 
   register() {
-    const data = {
-      username: this.registerUsername,
-      email: this.registerEmail,
-      password: this.registerPassword
-    };
-
-    this.apiService.registerUser(data).subscribe({
+    this.authService.register(this.registerUsername, this.registerEmail, this.registerPassword).subscribe({
       next: (response) => {
         console.log('Register success:', response);
-        localStorage.setItem('auth_token', response.access);
         alert('Inscription réussie ✅');
       },
       error: (error) => {
@@ -41,16 +34,16 @@ export class LoginRegisterComponent {
   }
 
   login() {
-    const credentials = {
-      username: this.loginUsername,
-      password: this.loginPassword
-    };
 
-    this.apiService.loginUser(credentials).subscribe({
+
+    this.authService.login(this.loginUsername, this.loginPassword).subscribe({
       next: (response) => {
         console.log('Login success:', response);
+        localStorage.setItem('username', response.username);  // Sauvegarder le username dans le localStorage
+        localStorage.setItem('jtw_token', response.access_token);
+        localStorage.setItem('csrftoken', response.csrf_token)
         alert('Connexion réussie ✅');
-        this.router.navigate(['/dashboard']); // 👈 Redirection ici
+        this.router.navigate(['/dashboard']);  // Rediriger après la connexion
       },
       error: (error) => {
         console.error('Login error:', error);

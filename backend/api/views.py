@@ -1,71 +1,69 @@
-import binascii
-import os
-import hashlib
-from rest_framework import viewsets
-from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise, Users
-from .serializers import *
+from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny  # Permet à tout le monde d'accéder sans authentification
-from rest_framework.exceptions import PermissionDenied
+from django.views.decorators.csrf import csrf_exempt
 
 
-class ClientViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = ClientSerializer  # Pour tout le monde, sans restriction
-    queryset = Client.objects.all()
+def getClients(request):
+    username = request.GET.get('username')  # Utiliser 'username' correctement
+    try:
+        user = User.objects.get(username=username)  # Utiliser le champ 'username'
+        clients = Client.objects.filter(appartient_a_user=user.id)  # Filtrer par l'ID de l'utilisateur
+        return JsonResponse(list(clients.values()), safe=False, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
 
-class FactureViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = FactureSerializer
-    queryset = Facture.objects.all()
-
-
-class LigneFactureViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = LigneFactureSerializer
-    queryset = LigneFacture.objects.all()
-
-
-class DepenseViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = DepenseSerializer
-    queryset = Depense.objects.all()
-
-class PaiementViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = PaiementSerializer
-    queryset = Paiement.objects.all()
-
-# Classe ParametresEntrepriseViewSet
-class ParametresEntrepriseViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = ParametresEntrepriseSerializer
-    queryset = ParametresEntreprise.objects.all()
-
-
-# Classe UsersViewSet
-class UsersViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Permet l'accès à tous, même sans être authentifié
-    serializer_class = UserSerializer
-    queryset = Users.objects.all()
-
-# Authentification et gestion des utilisateurs
-
-@api_view(['GET'])
-def get_salt(request):
+def getFactures(request):
     username = request.GET.get('username')
     try:
-        user = Users.objects.get(username=username)
-        return JsonResponse({'salt': user.salt})
-    except Users.DoesNotExist:
+        user = User.objects.get(username=username)
+        factures = Facture.objects.filter(client__appartient_a_user=user.id)  # Utilisation de l'ID de l'utilisateur
+        return JsonResponse(list(factures.values()), safe=False, status=200)
+    except User.DoesNotExist:
         return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
 
 
-def hash_password(password: str, salt: str) -> str:
-    return hashlib.sha256((password + salt).encode()).hexdigest()
+def getLigneFacture(request):
+    username = request.GET.get('username')
+    try:
+        user = User.objects.get(username=username)
+        lignes = LigneFacture.objects.filter(facture__client__appartient_a_user=user.id)  # Filtrer par l'ID de l'utilisateur
+        return JsonResponse(list(lignes.values()), safe=False, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+
+def getDepenses(request):
+    username = request.GET.get('username')
+    try:
+        user = User.objects.get(username=username)
+        depenses = Depense.objects.filter(appartient_a_user=user.id)  # Utilisation de l'ID de l'utilisateur
+        return JsonResponse(list(depenses.values()), safe=False,status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+def getPaiements(request):
+    username = request.GET.get('username')
+    try:
+        user = User.objects.get(username=username)
+        paiements = Paiement.objects.filter(facture__client__appartient_a_user=user.id)  # Filtrer par ID de l'utilisateur
+        return JsonResponse(list(paiements.values()), safe=False, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+
+def getParametresEntreprise(request):
+    username = request.GET.get('username')
+    try:
+        user = User.objects.get(username=username)
+        parametres = ParametresEntreprise.objects.filter(appartient_a_user=user.id)  # Filtrer par ID de l'utilisateur
+        return JsonResponse(list(parametres.values()), safe=False, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
 
 
 @api_view(['POST'])
@@ -74,27 +72,24 @@ def register_user(request):
     password = request.data.get('password')
     email = request.data.get('email')
 
+    # Vérifier que tous les champs sont présents
     if not username or not password or not email:
         return Response({'error': 'Tous les champs sont requis'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if Users.objects.filter(username=username).exists():
+    # Vérifier si le nom d'utilisateur existe déjà
+    if User.objects.filter(username=username).exists():
         return Response({'error': 'Nom d\'utilisateur déjà pris'}, status=status.HTTP_400_BAD_REQUEST)
 
-    salt = binascii.b2a_hex(os.urandom(6)).decode()
-    hashed_password = hash_password(password, salt)
-
-    user = Users.objects.create(
-        username=username,
-        password=hashed_password,
-        salt=salt,
-        email=email,
-        is_active=False
-    )
+    # Création de l'utilisateur avec un mot de passe sécurisé (automatique via create_user)
+    user = User.objects.create_user(username=username, password=password, email=email)
     user.save()
 
-    return Response({'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
+    # Retourner une réponse de succès
+    return Response({'message': 'Utilisateur créé avec succès. Un email de confirmation vous a été envoyé.'}, status=status.HTTP_201_CREATED)
 
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 @api_view(['POST'])
 def login_user(request):
     username = request.data.get('username')
@@ -104,16 +99,22 @@ def login_user(request):
         return Response({'error': 'Tous les champs sont requis'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        user = Users.objects.get(username=username)
-    except Users.DoesNotExist:
+        user = User.objects.get(username=username)  # Utilisation du modèle User de Django
+    except User.DoesNotExist:
         return Response({'error': 'Nom d\'utilisateur introuvable'}, status=status.HTTP_404_NOT_FOUND)
 
-    hashed_input_password = hash_password(password, user.salt)
+    # Vérifier le mot de passe
+    if user.check_password(password):  # Utilisation de la méthode check_password de Django
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        csrf_token = get_token(request)
 
-    if hashed_input_password == user.password:
-        user.is_active = True
-        user.save()
-        return Response({'message': 'Connexion réussie ✅'}, status=status.HTTP_200_OK)
+        return Response({
+            'message': 'Connexion réussie ✅',
+            'access_token': access_token,
+            'username': user.username,
+            'csrf_token': csrf_token  # <<< on l'ajoute dans la réponse JSON
+        }, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
 

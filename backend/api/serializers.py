@@ -1,22 +1,15 @@
-# backend/api/serializers.py
-
 from rest_framework import serializers
-from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise, Users
+from .models import Client, Facture, LigneFacture, Depense, Paiement, ParametresEntreprise
 
 class ClientSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='nom')  # Renommer 'nom' en 'name'
-    
     class Meta:
         model = Client
-        fields = ['id', 'name', 'email', 'telephone', 'adresse', 'date_ajout']
+        fields = '__all__'
 
 class FactureSerializer(serializers.ModelSerializer):
-    client_nom = serializers.CharField(source='client.nom', read_only=True)
-
     class Meta:
         model = Facture
-        fields = ['id', 'numero', 'date_emission', 'date_echeance', 'statut', 'montant_total', 'client_nom']
-
+        fields = '__all__'
 
 class LigneFactureSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,33 +30,3 @@ class ParametresEntrepriseSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParametresEntreprise
         fields = '__all__'
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Users
-        field = '__all__'
-    def create(self, validated_data):
-        user = Users.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
-    
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework import exceptions
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Personnalisation du serializer pour inclure plus d'informations
-    ou modifier le comportement lors de la création du token.
-    """
-
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        # Tu peux ajouter des informations personnalisées dans la réponse ici
-        # Par exemple, ajouter le nom d'utilisateur, etc.
-        data['username'] = self.user.username
-        return data

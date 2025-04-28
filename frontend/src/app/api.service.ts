@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';  // Assurez-vous d'importer AuthService
 
-// Définition des types des objets (dictionnaires, tableaux)
+// Définition des interfaces
 export interface Client {
   id: number;
-  name: string;
+  nom: string;
   email: string;
   telephone: string;
   adresse: string;
@@ -65,48 +64,37 @@ export interface Users {
 })
 export class ApiService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';  // URL de ton API Django
+  private apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}  
 
-
-
-  // Récupérer tous les clients
-  // Récupérer tous les clients avec le token d'authentification
-  getClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.apiUrl}/clients/`);
+  // Clients
+  getClients(username: string): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.apiUrl}/clients?username=${username}`);
   }
 
-  // Récupérer toutes les factures avec le token d'authentification
-  getFactures(): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.apiUrl}/factures/`);
+  // Factures
+  getFactures(username: string): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`${this.apiUrl}/factures?username=${username}`);
   }
 
-  getDepenses(): Observable<Depense[]> {
-    return this.http.get<Depense[]>(`${this.apiUrl}/depenses/`);
+  // Dépenses
+  getDepenses(username: string): Observable<Depense[]> {
+    return this.http.get<Depense[]>(`${this.apiUrl}/depenses?username=${username}`);
   }
 
-  getPaiements(): Observable<Paiement[]> {
-    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements/`);
+  // Paiements
+  getPaiements(username: string): Observable<Paiement[]> {
+    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements?username=${username}`);
   }
 
-  getUsers(): Observable<Users[]> {
-    return this.http.get<Users[]>(`${this.apiUrl}/users/`)
+  // Paramètres entreprise
+  getParametresEntreprise(username: string): Observable<Entreprise[]> {
+    return this.http.get<Entreprise[]>(`${this.apiUrl}/parametres?username=${username}`);
   }
 
-  getParametresEntreprise(): Observable<Entreprise[]> {
-    return this.http.get<Entreprise[]>(`${this.apiUrl}/parametres/`)
-  }
-
+  // Récupérer le salt pour un utilisateur
   getPasswordSalt(username: string): Observable<{ salt: string }> {
     return this.http.get<{ salt: string }>(`${this.apiUrl}/get_salt?username=${username}`);
-  }
-  
-  registerUser(data: { username: string, password: string, email: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register/`, data);
-  }
-
-  loginUser(data: { username: string, password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login/`, data);
   }
 }
