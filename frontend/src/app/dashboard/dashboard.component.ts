@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService, Paiement } from '../api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Client, Facture, Depense } from '../api.service';
+import { Client, Facture, Depense, LigneFacture } from '../api.service';
 import { ArcElement, CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement, DoughnutController, PieController, BarController, BarElement, Tooltip, Legend, Title } from 'chart.js';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { FacturesPageComponent } from '../factures-page/factures-page.component';
 import { forkJoin } from 'rxjs';
 
 Chart.register([
@@ -33,6 +34,7 @@ export class DashboardComponent implements OnInit {
   factures: Facture[] = [];
   depenses: Depense[] = [];
   paiements: Paiement[] = [];
+  ligneFactures: LigneFacture[] = [];
   factureCount = {
     payee: 0,
     envoyee: 0,
@@ -40,7 +42,7 @@ export class DashboardComponent implements OnInit {
   };
   username: string | null = null;
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService) {  }
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
@@ -63,13 +65,15 @@ export class DashboardComponent implements OnInit {
         clients: this.apiService.getClients(this.username),
         factures: this.apiService.getFactures(this.username),
         depenses: this.apiService.getDepenses(this.username),
-        paiements: this.apiService.getPaiements(this.username)
+        paiements: this.apiService.getPaiements(this.username),
+        ligneFactures: this.apiService.getLigneFacture(this.username)
       }).subscribe({
         next: (results) => {
           this.clients = results.clients;
           this.factures = results.factures;
           this.depenses = results.depenses;
           this.paiements = results.paiements;
+          this.ligneFactures = results.ligneFactures;
   
           // Comptage des factures par statut
           this.countFacturesByStatut();
@@ -97,14 +101,39 @@ export class DashboardComponent implements OnInit {
   }
 
   // Calculer le total des factures envoyées ou payées
+  // calculateTotal(): number {
+  //   let montant_total_final = 0;
+  //   for (let facture of this.factures) {
+  //     if (facture.statut === 'envoyée' || facture.statut === 'payée') {
+  //       montant_total_final += parseFloat(facture.montant_total.toString());
+  //     }
+  //   }
+  //   return montant_total_final;
+  // }
+
   calculateTotal(): number {
-    let montant_total_final = 0;
+    let totalTtc = 0;
     for (let facture of this.factures) {
-      if (facture.statut === 'envoyée' || facture.statut === 'payée') {
-        montant_total_final += parseFloat(facture.montant_total.toString());
-      }
+      totalTtc += this.getMontantTtcFacture(facture.id);
     }
-    return montant_total_final;
+    return totalTtc;
+  }
+  getMontantTtcFacture(id: number): number {
+    // Filtrer les lignes de la facture par l'ID de la facture
+    const lignesFacture = this.ligneFactures.filter(l => l.facture_id === id);
+    
+    // Calculer le montant total TTC
+    let totalTtc = 0;
+    
+    // Boucle sur les lignes pour calculer le montant TTC de chaque ligne
+    for (let ligne of lignesFacture) {
+      const montantHt = ligne.prix_unitaire * ligne.quantite; // Montant HT
+      const montantTtc = montantHt * (1 + ligne.tva / 100); // Montant TTC (avec TVA)
+      totalTtc += montantTtc; // Additionner les montants TTC de chaque ligne
+    }
+  
+    // Retourner le montant total TTC de la facture
+    return totalTtc;
   }
 
   // Créer un graphique en secteurs pour les factures

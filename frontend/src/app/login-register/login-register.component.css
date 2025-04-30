@@ -1,0 +1,93 @@
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #f0f8ff;
+    /* Fond bleu très clair */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+/* Style général des formulaires */
+.container form {
+    margin-bottom: 30px;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(241, 196, 15, 0.3);
+    /* Jaune pâle */
+}
+
+/* Titres */
+.container form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #f1c40f;
+    /* Jaune doré */
+    font-size: 26px;
+}
+
+/* Zones des inputs */
+.container form div {
+    margin-bottom: 20px;
+}
+
+.container form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #3498db;
+    /* Bleu vif */
+}
+
+/* Inputs */
+.container form input[type="text"],
+.container form input[type="email"],
+.container form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #3498db;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #eaf4fc;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.container form input[type="text"]:focus,
+.container form input[type="email"]:focus,
+.container form input[type="password"]:focus {
+    border-color: #f1c40f;
+    /* Focus jaune */
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Boutons */
+.container form button {
+    width: 100%;
+    padding: 14px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.container form button:hover {
+    background-color: #f1c40f;
+    /* Jaune au hover */
+    color: #333;
+    transform: translateY(-2px);
+}
+
+.container form button:active {
+    background-color: #e1b800;
+    color: white;
+    transform: translateY(0);
+}

@@ -23,7 +23,6 @@ class Facture(models.Model):
         ('envoyée', 'Envoyée'),
         ('payée', 'Payée'),
     ])
-    montant_total = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"Facture {self.numero}"

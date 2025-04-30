@@ -1,0 +1,145 @@
+/* Global reset pour éviter les débordements */
+body {
+    overflow-x: hidden;
+    /* Empêche le débordement horizontal global */
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Container avec sidebar */
+.container-fluid {
+    margin-left: 250px;
+    /* Décalage pour la sidebar (ajuster si nécessaire) */
+    padding: 20px;
+    max-width: calc(100vw - 250px);
+    /* Réduit la largeur du container pour prendre en compte la sidebar */
+    overflow-x: auto;
+    /* Ajoute une barre de défilement horizontale si nécessaire */
+}
+
+/* TABLEAU PRINCIPAL */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    /* Permet au tableau de s'adapter à son contenu */
+    word-wrap: break-word;
+    /* Évite que le texte déborde */
+    white-space: nowrap;
+    /* Empêche les mots longs de casser la mise en page */
+}
+
+/* En-tête du tableau */
+.table thead {
+    background-color: #f1c40f;
+    /* Jaune */
+    color: #000;
+}
+
+.table thead th {
+    padding: 12px;
+    text-align: left;
+}
+
+/* Ligne des factures : bleu marine */
+.table-primary {
+    background-color: #3498db;
+    color: #fff;
+    font-weight: bold;
+}
+
+.table-primary td {
+    padding: 12px;
+    background-color: #3498db;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Sous-ligne contenant les lignes de facture (clair) */
+.table-light {
+    background-color: #d6ebfa !important;
+    /* Bleu très clair */
+}
+
+.table-light td {
+    background-color: #cce8ff;
+}
+
+/* Table interne (lignes de facture) : bleu clair */
+.table-sm thead tr th {
+    background-color: #85c1e9;
+    color: white;
+}
+
+.table-sm td {
+    background-color: #eaf4fc;
+    color: #222;
+}
+
+/* Pour la responsivité des tables */
+.table-responsive {
+    width: 100%;
+    /* S'assurer que le tableau occupe toute la largeur disponible */
+    max-width: 100%;
+    /* Empêche le débordement horizontal */
+    overflow-x: auto;
+    /* Ajoute une barre de défilement horizontale si nécessaire */
+    margin-right: 0;
+}
+
+/* Hover sur la ligne principale de la facture */
+.table-primary:hover {
+    background-color: #1a252f !important;
+}
+
+/* Media Query pour les petits écrans */
+@media screen and (max-width: 768px) {
+    .container-fluid {
+        margin-left: 0;
+        /* Supprimer le décalage de la sidebar sur les petits écrans */
+        padding: 10px;
+    }
+
+    /* Amélioration de la responsivité pour les petites tables */
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        /* Fixe la mise en page pour que le tableau ne déborde pas */
+    }
+
+    /* Empêche les titres de colonnes trop larges d'entrer en débordement */
+    .table th,
+    .table td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        /* Ajoute "..." pour les textes trop longs */
+        white-space: nowrap;
+    }
+
+    .table-sm {
+        font-size: 0.85em;
+        /* Réduit la taille de la police pour les petits écrans */
+    }
+}
+
+/* Statut envoyé (vert) */
+.status-envoye {
+    background-color: #28a745 !important;
+    /* Vert */
+    color: white;
+}
+
+/* Statut brouillon (rouge) */
+.status-brouillon {
+    background-color: #dc3545 !important;
+    /* Rouge */
+    color: white;
+}
+
+/* Statut payé (bleu) */
+.status-ayee {
+    background-color: #007bff !important;
+    /* Bleu */
+    color: white;
+}

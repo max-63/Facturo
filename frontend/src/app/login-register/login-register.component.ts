@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService, Users } from '../api.service';
+import { ApiService } from '../api.service';
 import { FormsModule } from '@angular/forms'; // Import important pour ngModel
 import { AuthService } from '../auth.service';  // Import du service AuthService
 

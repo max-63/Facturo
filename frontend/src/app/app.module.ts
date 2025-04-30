@@ -12,6 +12,8 @@ import { NgChartsModule  } from 'ng2-charts';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
 import { AuthInterceptor } from './auth.interceptor';
+import { ClientsPageComponent } from './clients-page/clients-page.component';
+import { FacturesPageComponent } from './factures-page/factures-page.component';
 @NgModule({
   declarations: [
     //pas de composant standalone  
@@ -26,6 +28,8 @@ import { AuthInterceptor } from './auth.interceptor';
     DashboardComponent, 
     AppComponent,
     FormsModule,
+    ClientsPageComponent,
+    FacturesPageComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },  // Ajout de l'intercepteur

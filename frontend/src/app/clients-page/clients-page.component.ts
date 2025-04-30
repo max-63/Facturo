@@ -5,6 +5,8 @@ import { ApiService, Paiement } from '../api.service'; // Assurez-vous que ApiSe
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Client, Facture, Depense, Entreprise } from '../api.service'; // Les interfaces sont déjà importées
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-clients-page',
@@ -20,43 +22,30 @@ export class ClientsPageComponent implements OnInit {
   depenses: Depense[] = [];
   paiements: Paiement[] = [];
   entreprise: Entreprise[] = [];
-  ngOnInit(): void {
 
+  username: string | null = null;
+  ngOnInit(): void {
+    this.username = localStorage.getItem('username');
+    if (this.username) {
+      this.loadData();
+    } else {
+      console.error('Username non trouvé dans localStorage.');
+    }
   }
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private router: Router) { }
 
   loadData(): void {
-    // Utilise forkJoin pour attendre que toutes les données soient récupérées avant de procéder
-    forkJoin({
-      clients: this.apiService.getClients()
-
-    }).subscribe({
-      next: (results) => {
-        // Une fois que toutes les données sont récupérées
-        this.clients = results.clients;
-
-
-        // Après que toutes les données soient chargées, on procède à la création des graphiques
-        
-      },
-      error: (error) => {
-        console.error('Erreur lors de la récupération des données:', error);
-      }
-    });
-  }
-
-  // loadParametresEntreprise(): void {
-  //   this.apiService.getParametresEntreprise().subscribe(
-  //     (data: Entreprise[]) => {
-  //       this.entreprise = data;
-  //     },
-  //     error => {
-  //       console.error('Erreur lors de la récupération des clients', error);
-  //     }
-  //   );
-  // }
-
-  getCleints(): void {
-
+    if (this.username !== null) {
+      forkJoin({
+        clients: this.apiService.getClients(this.username),
+      }).subscribe({
+        next: (results) => {
+          this.clients = results.clients;
+        },
+        error: (error) => {
+          console.error('Erreur lors de la récupération des données:', error);
+        }
+      });
+    }
   }
 }

@@ -52,14 +52,14 @@
             <table class="custom-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Montant</th>
+                  <th>Numéro</th>
+                  <th>Montant TTC</th>
                   <th>Date d'émission</th>
                 </tr>
               </thead>
               <tbody class="custom-tbody">
                 <tr *ngFor="let facture of factures">
-                  <td>{{ facture.id }}</td>
+                  <td>{{ facture.numero }}</td>
                   <td
                     [ngStyle]="{
                       color:
@@ -72,7 +72,7 @@
                           : 'black'
                     }"
                   >
-                    {{ facture.montant_total }}
+                    {{ getMontantTtcFacture(facture.id) }}
                   </td>
   
                   <td>{{ facture.date_emission }}</td>
@@ -81,7 +81,7 @@
               <tfoot>
                 <tr>
                   <td></td>
-                  <td>Montant total : {{ calculateTotal() | currency }}</td>
+                  <td>Montant total TTC : {{ calculateTotal() | currency }}</td>
                   <td></td>
                 </tr>
               </tfoot>

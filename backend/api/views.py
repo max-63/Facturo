@@ -66,6 +66,49 @@ def getParametresEntreprise(request):
 
 
 
+
+
+
+
+
+
+
+@api_view(['POST'])
+def update_lignes_facture(request):
+    try:
+        lignes_data = request.data.get('lignes')  # tableau de lignes modifiées
+        print(lignes_data)
+
+        if not lignes_data or not isinstance(lignes_data, list):
+            return Response({'error': 'Données invalides ou manquantes'}, status=status.HTTP_400_BAD_REQUEST)
+
+        for ligne in lignes_data:
+            ligne_id = ligne.get('id')
+            try:
+                obj = LigneFacture.objects.get(id=ligne_id)
+
+                obj.nom_produit = ligne.get('nom_produit', obj.nom_produit)
+                obj.description = ligne.get('description', obj.description)
+                obj.quantite = ligne.get('quantite', obj.quantite)
+                obj.prix_unitaire = ligne.get('prix_unitaire', obj.prix_unitaire)
+                obj.tva = ligne.get('tva', obj.tva)
+                obj.save()
+
+            except LigneFacture.DoesNotExist:
+                continue  # Ignore si la ligne n'existe pas
+
+        return Response({'message': 'Lignes de facture mises à jour avec succès ✅'}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
+
+
 @api_view(['POST'])
 def register_user(request):
     username = request.data.get('username')
