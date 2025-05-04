@@ -91,22 +91,21 @@ export class ApiService {
 
   // Paramètres entreprise
   getParametresEntreprise(username: string): Observable<Entreprise[]> {
-    return this.http.get<Entreprise[]>(`${this.apiUrl}/parametres?username=${username}`);
+    return this.http.get<Entreprise[]>(`${this.apiUrl}/entreprise?username=${username}`);
   }
 
   getLigneFacture(username: string): Observable<LigneFacture[]> {
     return this.http.get<LigneFacture[]>(`${this.apiUrl}/ligne_facture?username=${username}`);
   }
 
-  updateLignesFacture(lignes: LigneFacture[]): Observable<any> {
-    const url = `${this.apiUrl}/update_lignes_facture`; // L'URL de ton API pour la mise à jour
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json', // Spécifie que tu envoies du JSON
-    });
-  
-    return this.http.post<any>(url, { lignes }, { headers });
-  }
-  
+  updateFactureAvecLignes(facture: any): Observable<any> {
+  const url = `${this.apiUrl}/update_facture/${facture.id}/`; // L'URL de ton API pour la mise à jour de la facture
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json', // Envoi du JSON
+  });
 
-  
+  return this.http.post<any>(url, facture, { headers });
+}
+
+
 }

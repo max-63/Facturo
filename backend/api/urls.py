@@ -17,5 +17,5 @@ urlpatterns = [
     path('paiements', getPaiements, name='get_paiements'),
     path('entreprise', getParametresEntreprise, name='get_parametres_entreprise'),
     path('ligne_facture', getLigneFacture, name='get_ligne_facture'),
-    path('update_lignes_facture', update_lignes_facture, name='update_facture'),
+    path('update_facture/<int:facture_id>/', update_facture, name='update_facture'),
 ]

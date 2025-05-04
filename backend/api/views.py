@@ -71,41 +71,61 @@ def getParametresEntreprise(request):
 
 
 
-
-
 @api_view(['POST'])
-def update_lignes_facture(request):
+def update_facture(request, facture_id):
     try:
-        lignes_data = request.data.get('lignes')  # tableau de lignes modifiées
-        print(lignes_data)
+        # Récupérer la facture principale
+        facture = Facture.objects.get(id=facture_id)
+    except Facture.DoesNotExist:
+        return Response({'error': 'Facture non trouvée'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not lignes_data or not isinstance(lignes_data, list):
-            return Response({'error': 'Données invalides ou manquantes'}, status=status.HTTP_400_BAD_REQUEST)
+    # Récupérer les données de la requête
+    data = request.data
+    print(data)  # Juste pour debugger et vérifier les données envoyées
+    
+    # 1. Mise à jour des informations de la facture
+    facture.numero = data.get('numero', facture.numero)
+    facture.date_emission = data.get('date_emission', facture.date_emission)
+    facture.date_echeance = data.get('date_echeance', facture.date_echeance)
+    facture.statut = data.get('statut', facture.statut)
 
-        for ligne in lignes_data:
-            ligne_id = ligne.get('id')
-            try:
-                obj = LigneFacture.objects.get(id=ligne_id)
+    # Vérification et mise à jour du client
+    client_id = data.get('client_id')
+    if client_id:
+        try:
+            client = Client.objects.get(id=client_id)
+            facture.client = client
+        except Client.DoesNotExist:
+            return Response({'error': 'Client non trouvé'}, status=status.HTTP_400_BAD_REQUEST)
 
-                obj.nom_produit = ligne.get('nom_produit', obj.nom_produit)
-                obj.description = ligne.get('description', obj.description)
-                obj.quantite = ligne.get('quantite', obj.quantite)
-                obj.prix_unitaire = ligne.get('prix_unitaire', obj.prix_unitaire)
-                obj.tva = ligne.get('tva', obj.tva)
-                obj.save()
+    # Sauvegarder les changements de la facture principale
+    facture.save()
 
-            except LigneFacture.DoesNotExist:
-                continue  # Ignore si la ligne n'existe pas
+    # 2. Mise à jour des lignes de la facture
+    lignes_data = data.get('lignes', [])
+    for ligne_data in lignes_data:
+        ligne_id = ligne_data.get('id')
+        try:
+            # Trouver la ligne existante
+            ligne = LigneFacture.objects.get(id=ligne_id, facture=facture)
+            ligne.nom_produit = ligne_data.get('produit', ligne.nom_produit)
+            ligne.description = ligne_data.get('description', ligne.description)
+            ligne.quantite = ligne_data.get('quantite', ligne.quantite)
+            ligne.prix_unitaire = ligne_data.get('prix_unitaire', ligne.prix_unitaire)
+            ligne.tva = ligne_data.get('tva', ligne.tva)
+            ligne.save()
+        except LigneFacture.DoesNotExist:
+            # Si la ligne n'existe pas, créer une nouvelle ligne
+            LigneFacture.objects.create(
+                facture=facture,
+                produit=ligne_data.get('produit'),
+                description=ligne_data.get('description'),
+                quantite=ligne_data.get('quantite'),
+                prix_unitaire=ligne_data.get('prix_unitaire'),
+                tva=ligne_data.get('tva')
+            )
 
-        return Response({'message': 'Lignes de facture mises à jour avec succès ✅'}, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
+    return Response({'success': 'Facture mise à jour avec succès!'}, status=status.HTTP_200_OK)
 
 
 

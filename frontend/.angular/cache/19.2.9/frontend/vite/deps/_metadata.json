@@ -1,85 +1,100 @@
 {
-  "hash": "691fc7b3",
-  "configHash": "0017ef7a",
-  "lockfileHash": "c39f49bf",
-  "browserHash": "1b5756a0",
+  "hash": "513ca0f5",
+  "configHash": "4a173d89",
+  "lockfileHash": "b7d5952f",
+  "browserHash": "44d84b53",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "557a300d",
+      "fileHash": "02586946",
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
-      "fileHash": "23614ae5",
+      "fileHash": "fd6a0526",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "989beec6",
+      "fileHash": "052eda4d",
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
-      "fileHash": "5e7de339",
+      "fileHash": "1c2de1bb",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "241e425b",
+      "fileHash": "09cf9916",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "38b56e46",
+      "fileHash": "8b650828",
       "needsInterop": false
     },
     "chart.js": {
       "src": "../../../../../../node_modules/chart.js/dist/chart.js",
       "file": "chart__js.js",
-      "fileHash": "b860f200",
+      "fileHash": "d8948ccd",
+      "needsInterop": false
+    },
+    "jspdf": {
+      "src": "../../../../../../node_modules/jspdf/dist/jspdf.es.min.js",
+      "file": "jspdf.js",
+      "fileHash": "fa0b8d26",
       "needsInterop": false
     },
     "rxjs": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
       "file": "rxjs.js",
-      "fileHash": "c15903ab",
+      "fileHash": "83654367",
       "needsInterop": false
     },
     "rxjs/operators": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
       "file": "rxjs_operators.js",
-      "fileHash": "3c1c2f6d",
+      "fileHash": "c8330978",
       "needsInterop": false
     },
     "sweetalert2": {
       "src": "../../../../../../node_modules/sweetalert2/dist/sweetalert2.esm.all.js",
       "file": "sweetalert2.js",
-      "fileHash": "5b8b33de",
+      "fileHash": "00d50524",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-AXZ6EBGW": {
-      "file": "chunk-AXZ6EBGW.js"
+    "html2canvas.esm-ZNF64ISW": {
+      "file": "html2canvas__esm-ZNF64ISW.js"
     },
-    "chunk-LMEYVPKM": {
-      "file": "chunk-LMEYVPKM.js"
+    "purify.es-4ZNAMFB3": {
+      "file": "purify__es-4ZNAMFB3.js"
     },
-    "chunk-X6YRM5WT": {
-      "file": "chunk-X6YRM5WT.js"
+    "index.es-LRPORJ4R": {
+      "file": "index__es-LRPORJ4R.js"
     },
-    "chunk-DZUBRU6O": {
-      "file": "chunk-DZUBRU6O.js"
+    "chunk-GNBZ3OFG": {
+      "file": "chunk-GNBZ3OFG.js"
     },
-    "chunk-JSWM5O77": {
-      "file": "chunk-JSWM5O77.js"
+    "chunk-GFVKUQLB": {
+      "file": "chunk-GFVKUQLB.js"
+    },
+    "chunk-L56M4YPG": {
+      "file": "chunk-L56M4YPG.js"
+    },
+    "chunk-C47K2TSR": {
+      "file": "chunk-C47K2TSR.js"
+    },
+    "chunk-3OHZNUEH": {
+      "file": "chunk-3OHZNUEH.js"
     },
     "chunk-WPM5VTLQ": {
       "file": "chunk-WPM5VTLQ.js"
@@ -90,8 +105,11 @@
     "chunk-4S3KYZTJ": {
       "file": "chunk-4S3KYZTJ.js"
     },
-    "chunk-WDMUDEB6": {
-      "file": "chunk-WDMUDEB6.js"
+    "chunk-WUUVWCMF": {
+      "file": "chunk-WUUVWCMF.js"
+    },
+    "chunk-TXDUYLVM": {
+      "file": "chunk-TXDUYLVM.js"
     }
   }
 }

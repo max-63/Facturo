@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facture {{ facture.numero }}</title>
+  <style>
+    :root {
+      --blue: #1E3A8A;
+      --yellow: #FACC15;
+      --white: #FFFFFF;
+      --gray-light: #F9FAFB;
+      --gray-dark: #374151;
+      --text: #111827;
+    }
+
+    body {
+      background: var(--gray-light);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+    }
+
+    .invoice-wrapper {
+      max-width: 900px;
+      margin: auto;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--blue);
+      color: var(--white);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .company-info {
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    .invoice-body {
+      padding: 2rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section h2 {
+      color: var(--blue);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .info-box {
+      background-color: var(--gray-light);
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: var(--blue);
+      color: var(--white);
+      padding: 10px;
+      text-align: left;
+    }
+
+    td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px;
+    }
+
+    .totals {
+      text-align: right;
+      margin-top: 1rem;
+    }
+
+    .totals div {
+      margin-bottom: 5px;
+    }
+
+    .totals .total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--blue);
+    }
+
+    footer {
+      background-color: var(--yellow);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: var(--gray-dark);
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .company-info {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-wrapper">
+    <header>
+      <div>
+        <h1>Facture</h1>
+        <div><strong>N° :</strong> {{ facture.numero }}</div>
+        <div><strong>Date :</strong> {{ facture.date_emission|date:"d/m/Y" }}</div>
+        <div><strong>Échéance :</strong> {{ facture.date_echeance|date:"d/m/Y" }}</div>
+      </div>
+      <div class="company-info">
+        <strong>{{ entreprise.nom }}</strong><br>
+        {{ entreprise.adresse }}<br>
+        SIRET : {{ entreprise.siret }}<br>
+        {{ entreprise.email }}
+      </div>
+    </header>
+
+    <div class="invoice-body">
+
+      <div class="section grid-2">
+        <div class="info-box">
+          <h2>Client</h2>
+          {{ facture.client.nom }}<br>
+          {{ facture.client.adresse }}<br>
+          {{ facture.client.email }}
+        </div>
+        <div class="info-box">
+          <h2>Informations</h2>
+          Statut : {{ facture.get_statut_display }}<br>
+          Paiement : {{ facture.moyen_paiement }}
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Détails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Quantité</th>
+              <th>PU HT</th>
+              <th>TVA %</th>
+              <th>Montant TVA</th>
+              <th>Total TTC</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ligne in facture.lignes.all %}
+              <tr>
+                <td>{{ ligne.description }}</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.prix_unitaire }} €</td>
+                <td>{{ ligne.tva }}%</td>
+                <td>{{ ligne.montant_tva|floatformat:2 }} €</td>
+                <td>{{ ligne.total_ttc|floatformat:2 }} €</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section totals">
+        <div>Sous-total HT : {{ facture.total_ht|floatformat:2 }} €</div>
+        {% for taux, montant in facture.resume_tva.items %}
+          <div>TVA {{ taux }}% : {{ montant|floatformat:2 }} €</div>
+        {% endfor %}
+        <div class="total">Total TTC : {{ facture.total_ttc|floatformat:2 }} €</div>
+      </div>
+    </div>
+
+    <footer>
+      Merci pour votre confiance 🙏<br>
+      Une question ? Écrivez-nous à {{ entreprise.email }}
+    </footer>
+  </div>
+</body>
+</html>

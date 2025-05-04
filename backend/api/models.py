@@ -23,7 +23,6 @@ class Facture(models.Model):
         ('envoyée', 'Envoyée'),
         ('payée', 'Payée'),
     ])
-
     def __str__(self):
         return f"Facture {self.numero}"
     
