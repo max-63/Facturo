@@ -23,21 +23,21 @@ export class ClientsPageComponent implements OnInit {
   paiements: Paiement[] = [];
   entreprise: Entreprise[] = [];
 
-  username: string | null = null;
+  token: string | null = null;
   ngOnInit(): void {
-    this.username = localStorage.getItem('username');
-    if (this.username) {
+    this.token = localStorage.getItem('jtw_token');
+    if (this.token) {
       this.loadData();
     } else {
       console.error('Username non trouvé dans localStorage.');
     }
   }
-  constructor(private apiService: ApiService, private router: Router) { }
+  constructor(private readonly apiService: ApiService, private readonly router: Router) { }
 
   loadData(): void {
-    if (this.username !== null) {
+    if (this.token !== null) {
       forkJoin({
-        clients: this.apiService.getClients(this.username),
+        clients: this.apiService.getClients(),
       }).subscribe({
         next: (results) => {
           this.clients = results.clients;

@@ -19,10 +19,10 @@ interface DecodedToken {
 
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';  // Change l'URL selon ton API
-  private tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private readonly apiUrl = 'http://127.0.0.1:8000/api';  // Change l'URL selon ton API
+  private readonly tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private readonly router: Router, private readonly http: HttpClient) {}
 
   // Vérifie si l'utilisateur est authentifié
   isAuthenticated(): boolean {

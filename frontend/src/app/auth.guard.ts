@@ -8,14 +8,14 @@ import { Observable } from 'rxjs';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private readonly authService: AuthService, private readonly router: Router) {}
 
   canActivate(): Observable<boolean> | Promise<boolean> | boolean {
     if (this.authService.isAuthenticated()) {
-      return true;  // L'utilisateur est authentifié, autorise l'accès
+      return true;
     } else {
-      this.router.navigate(['/account']);  // Redirige l'utilisateur vers la page de login
-      return false;  // Empêche l'accès à la route
+      this.router.navigate(['/account']);
+      return false;
     }
   }
 }

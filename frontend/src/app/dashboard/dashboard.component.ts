@@ -40,13 +40,13 @@ export class DashboardComponent implements OnInit {
     envoyee: 0,
     brouillon: 0
   };
-  username: string | null = null;
+  token: string | null = null;
 
-  constructor(private apiService: ApiService) {  }
+  constructor(private readonly apiService: ApiService) {  }
 
   ngOnInit(): void {
-    this.username = localStorage.getItem('username');
-    if (this.username) {
+    this.token = localStorage.getItem('jtw_token');
+    if (this.token) {
       this.loadData();
     } else {
       console.error('Username non trouvé dans localStorage.');
@@ -60,13 +60,13 @@ export class DashboardComponent implements OnInit {
 
   // Charger les données (clients, factures, paiements, dépenses)
   loadData(): void {
-    if (this.username !== null) {
+    if (this.token !== null) {
       forkJoin({
-        clients: this.apiService.getClients(this.username),
-        factures: this.apiService.getFactures(this.username),
-        depenses: this.apiService.getDepenses(this.username),
-        paiements: this.apiService.getPaiements(this.username),
-        ligneFactures: this.apiService.getLigneFacture(this.username)
+        clients: this.apiService.getClients(),
+        factures: this.apiService.getFactures(),
+        depenses: this.apiService.getDepenses(),
+        paiements: this.apiService.getPaiements(),
+        ligneFactures: this.apiService.getLigneFacture()
       }).subscribe({
         next: (results) => {
           this.clients = results.clients;
@@ -74,10 +74,10 @@ export class DashboardComponent implements OnInit {
           this.depenses = results.depenses;
           this.paiements = results.paiements;
           this.ligneFactures = results.ligneFactures;
-  
+
           // Comptage des factures par statut
           this.countFacturesByStatut();
-  
+
           // Création des graphiques après chargement des données
           this.createChartPie();
           this.createChartBar();
@@ -121,17 +121,17 @@ export class DashboardComponent implements OnInit {
   getMontantTtcFacture(id: number): number {
     // Filtrer les lignes de la facture par l'ID de la facture
     const lignesFacture = this.ligneFactures.filter(l => l.facture_id === id);
-    
+
     // Calculer le montant total TTC
     let totalTtc = 0;
-    
+
     // Boucle sur les lignes pour calculer le montant TTC de chaque ligne
     for (let ligne of lignesFacture) {
       const montantHt = ligne.prix_unitaire * ligne.quantite; // Montant HT
       const montantTtc = montantHt * (1 + ligne.tva / 100); // Montant TTC (avec TVA)
       totalTtc += montantTtc; // Additionner les montants TTC de chaque ligne
     }
-  
+
     // Retourner le montant total TTC de la facture
     return totalTtc;
   }
@@ -199,15 +199,15 @@ export class DashboardComponent implements OnInit {
       // Agréger les dépenses et paiements par mois
       const monthlyExpenses = this.aggregateExpensesByMonth(this.depenses);
       const monthlyPaiements = this.aggregatePaiementsByMonth(this.paiements);
-  
+
       // Fusionner et trier les mois
       const allMonths = new Set([...Object.keys(monthlyExpenses), ...Object.keys(monthlyPaiements)]);
       const labels = Array.from(allMonths).sort();
-  
+
       // Créer les données des dépenses et paiements
       const expensesData = labels.map(month => monthlyExpenses[month] || 0);
       const paiementsData = labels.map(month => monthlyPaiements[month] || 0);
-  
+
       new Chart(ctx2, {
         type: 'bar',
         data: {

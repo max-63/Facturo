@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthInterceptor } from './auth.interceptor';
 
 // Définition des interfaces
 export interface Client {
@@ -65,47 +66,40 @@ export interface LigneFacture {
 })
 export class ApiService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http: HttpClient) {}  
+  constructor(private readonly http: HttpClient) {}
 
-  // Clients
-  getClients(username: string): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.apiUrl}/clients?username=${username}`);
+  getClients(): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.apiUrl}/clients`);
   }
 
-  // Factures
-  getFactures(username: string): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.apiUrl}/factures?username=${username}`);
+  getFactures(): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`${this.apiUrl}/factures`);
   }
 
-  // Dépenses
-  getDepenses(username: string): Observable<Depense[]> {
-    return this.http.get<Depense[]>(`${this.apiUrl}/depenses?username=${username}`);
+  getDepenses(): Observable<Depense[]> {
+    return this.http.get<Depense[]>(`${this.apiUrl}/depenses`);
   }
 
-  // Paiements
-  getPaiements(username: string): Observable<Paiement[]> {
-    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements?username=${username}`);
+  getPaiements(): Observable<Paiement[]> {
+    return this.http.get<Paiement[]>(`${this.apiUrl}/paiements`);
   }
 
-  // Paramètres entreprise
-  getParametresEntreprise(username: string): Observable<Entreprise[]> {
-    return this.http.get<Entreprise[]>(`${this.apiUrl}/entreprise?username=${username}`);
+  getParametresEntreprise(): Observable<Entreprise[]> {
+    return this.http.get<Entreprise[]>(`${this.apiUrl}/entreprise`);
   }
 
-  getLigneFacture(username: string): Observable<LigneFacture[]> {
-    return this.http.get<LigneFacture[]>(`${this.apiUrl}/ligne_facture?username=${username}`);
+  getLigneFacture(): Observable<LigneFacture[]> {
+    return this.http.get<LigneFacture[]>(`${this.apiUrl}/ligne_facture`);
   }
 
   updateFactureAvecLignes(facture: any): Observable<any> {
-  const url = `${this.apiUrl}/update_facture/${facture.id}/`; // L'URL de ton API pour la mise à jour de la facture
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json', // Envoi du JSON
-  });
+    const url = `${this.apiUrl}/update_facture/${facture.id}/`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
 
-  return this.http.post<any>(url, facture, { headers });
-}
-
-
+    return this.http.post<any>(url, facture, { headers });
+  }
 }

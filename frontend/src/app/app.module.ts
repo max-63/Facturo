@@ -16,23 +16,23 @@ import { ClientsPageComponent } from './clients-page/clients-page.component';
 import { FacturesPageComponent } from './factures-page/factures-page.component';
 @NgModule({
   declarations: [
-    //pas de composant standalone  
+    //pas de composant standalone
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes),  // Intégration des routes dans le module
     CommonModule,  // Ajoute CommonModule dans les imports
-    NgChartsModule, 
+    NgChartsModule,
     SidebarComponent,
-    DashboardComponent, 
+    DashboardComponent,
     AppComponent,
     FormsModule,
     ClientsPageComponent,
     FacturesPageComponent
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },  // Ajout de l'intercepteur
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   // bootstrap: [AppComponent]
 })

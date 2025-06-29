@@ -25,13 +25,13 @@ export class FacturesPageComponent implements OnInit {
 
   constructor(private apiService: ApiService) {}
 
-  username: string | null = null;
+  token: string | null = null;
   ngOnInit(): void {
-    this.username = localStorage.getItem('username');
-    if (this.username) {
+    this.token = localStorage.getItem('jtw_token');
+    if (this.token) {
       this.loadData();
     } else {
-      console.error('Username non trouvé dans localStorage.');
+      console.error('token non trouvé dans localStorage.');
     }
   }
   getLignesFactures(facture: Facture): LigneFacture[] {
@@ -268,7 +268,7 @@ export class FacturesPageComponent implements OnInit {
       const montantHT = ligne.quantite * ligne.prix_unitaire;
       const montantTTC = montantHT + (montantHT * ligne.tva) / 100;
       html += `
-      
+
       <tr>
         <td>
         <input type="hidden" name="id_${i}" value="${ligne.id}" /> <!-- ID caché -->
@@ -312,7 +312,7 @@ export class FacturesPageComponent implements OnInit {
       cancelButtonText: '❌ Fermer',
       showCloseButton: true,
       width: '70%',
-      
+
       didOpen: () => {
         const form = document.getElementById('form-facture-' + id)!;
 
@@ -323,16 +323,16 @@ export class FacturesPageComponent implements OnInit {
             const quantiteInput = form.querySelector(`[name=quantite_${i}]`) as HTMLInputElement;
             const prixInput = form.querySelector(`[name=prix_unitaire_${i}]`) as HTMLInputElement;
             const tvaInput = form.querySelector(`[name=tva_${i}]`) as HTMLInputElement;
-        
+
             if (!quantiteInput || !prixInput || !tvaInput) return;
-        
+
             const quantite = parseFloat(quantiteInput.value) || 0;
             const prix = parseFloat(prixInput.value) || 0;
             const tva = parseFloat(tvaInput.value) || 0;
-        
+
             const montantHT = quantite * prix;
             const montantTTC = montantHT + (montantHT * tva) / 100;
-        
+
             const htCell = row.querySelectorAll('td')[5];
             const ttcCell = row.querySelectorAll('td')[6];
             if (htCell) htCell.innerHTML = `${montantHT.toFixed(2)} €`;
@@ -370,9 +370,9 @@ export class FacturesPageComponent implements OnInit {
       preConfirm: () => {
         const form = document.getElementById(`form-facture-${id}`) as HTMLFormElement;
         console.log('🧾 Formulaire trouvé ?', form);
-      
+
         const formData = new FormData(form);
-      
+
         const updatedFacture = {
           id:  Number(formData.get('id')),
           numero: formData.get('numero') as string,
@@ -390,9 +390,9 @@ export class FacturesPageComponent implements OnInit {
             tva: Number(formData.get(`tva_${i}`)),
           })),
         };
-      
+
         console.log(updatedFacture);
-      
+
         // Appeler la méthode pour envoyer la facture mise à jour à l'API
         this.apiService.updateFactureAvecLignes(updatedFacture).subscribe(
           (response) => {
@@ -414,12 +414,12 @@ export class FacturesPageComponent implements OnInit {
   }
 
   loadData(): void {
-    if (this.username !== null) {
+    if (this.token !== null) {
       forkJoin({
-        factures: this.apiService.getFactures(this.username),
-        ligneFacture: this.apiService.getLigneFacture(this.username),
-        clients: this.apiService.getClients(this.username),
-        entreprise: this.apiService.getParametresEntreprise(this.username),
+        factures: this.apiService.getFactures(),
+        ligneFacture: this.apiService.getLigneFacture(),
+        clients: this.apiService.getClients(),
+        entreprise: this.apiService.getParametresEntreprise(),
       }).subscribe({
         next: (results) => {
           this.factures = results.factures;
@@ -689,5 +689,5 @@ export class FacturesPageComponent implements OnInit {
     const pdf = new jsPDF('p', 'mm', 'a4');
     // a finir
   }
-  
+
 }

@@ -20,7 +20,7 @@ export class LoginRegisterComponent {
   loginPassword = '';
   polipop: any;
 
-  constructor(private apiService: ApiService, private router: Router, private authService: AuthService) {} // 👈 ajoute Router ici
+  constructor(private readonly apiService: ApiService, private readonly router: Router, private readonly authService: AuthService) {} // 👈 ajoute Router ici
 
   register() {
     this.authService.register(this.registerUsername, this.registerEmail, this.registerPassword).subscribe({
@@ -43,9 +43,10 @@ export class LoginRegisterComponent {
         console.log('Login success:', response);
         localStorage.setItem('username', response.username);  // Sauvegarder le username dans le localStorage
         localStorage.setItem('jtw_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
         localStorage.setItem('csrftoken', response.csrf_token)
         alert('Connexion réussie ✅');
-        
+
         this.router.navigate(['/dashboard']);  // Rediriger après la connexion
       },
       error: (error) => {
