@@ -63,50 +63,81 @@ def getParametresEntreprise(request):
 def update_facture(request, facture_id):
     try:
         facture = Facture.objects.get(id=facture_id)
+        if facture.statut != "brouillon":
+            print('facture brouillon 1')
+            return Response({'error': 'Vous ne pouvez modifier que une facture brouillon'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            data = request.data
+    
+        if facture.statut == 'brouillon':
+            print("facture brouillon")
+            # Mise à jour de la facture
+            facture.numero = data.get('numero', facture.numero)
+            facture.date_emission = data.get('date_emission', facture.date_emission)
+            facture.date_echeance = data.get('date_echeance', facture.date_echeance)
+            facture.statut = data.get('statut', facture.statut)
+
+            client_id = data.get('client_id')
+            if client_id:
+                try:
+                    client = Client.objects.get(id=client_id)
+                    facture.client = client
+                except Client.DoesNotExist:
+                    return Response({'error': 'Client non trouvé'}, status=status.HTTP_400_BAD_REQUEST)
+
+            facture.save()
+
+            lignes_data = data.get('lignes', [])
+            for ligne_data in lignes_data:
+                ligne_id = ligne_data.get('id')
+                try:
+                    ligne = LigneFacture.objects.get(id=ligne_id, facture=facture)
+                    ligne.nom_produit = ligne_data.get('produit', ligne.nom_produit)
+                    ligne.description = ligne_data.get('description', ligne.description)
+                    ligne.quantite = ligne_data.get('quantite', ligne.quantite)
+                    ligne.prix_unitaire = ligne_data.get('prix_unitaire', ligne.prix_unitaire)
+                    ligne.tva = ligne_data.get('tva', ligne.tva)
+                    ligne.save()
+                except LigneFacture.DoesNotExist:
+                    LigneFacture.objects.create(
+                        facture=facture,
+                        nom_produit=ligne_data.get('produit'),
+                        description=ligne_data.get('description'),
+                        quantite=ligne_data.get('quantite'),
+                        prix_unitaire=ligne_data.get('prix_unitaire'),
+                        tva=ligne_data.get('tva')
+                    )
+
+            return Response({'success': 'Facture mise à jour avec succès!'}, status=status.HTTP_200_OK)
     except Facture.DoesNotExist:
         return Response({'error': 'Facture non trouvée'}, status=status.HTTP_404_NOT_FOUND)
 
-    data = request.data
-    
-    # Mise à jour de la facture
-    facture.numero = data.get('numero', facture.numero)
-    facture.date_emission = data.get('date_emission', facture.date_emission)
-    facture.date_echeance = data.get('date_echeance', facture.date_echeance)
-    facture.statut = data.get('statut', facture.statut)
 
-    client_id = data.get('client_id')
-    if client_id:
-        try:
-            client = Client.objects.get(id=client_id)
-            facture.client = client
-        except Client.DoesNotExist:
-            return Response({'error': 'Client non trouvé'}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def archiver_facture(request, facture_id):
+    facture = Facture.objects.get(id=facture_id)
+    if facture:
+        print(facture)
+        facture.archivee = True
+        facture.save()
+        return Response({'success': 'Facture mise à jour avec succès!'}, status=status.HTTP_200_OK)
+    else:
+        print('caca')
+        return Response({'error': 'Facture non trouvée'}, status=status.HTTP_403_FORBIDDEN)
 
-    facture.save()
-
-    lignes_data = data.get('lignes', [])
-    for ligne_data in lignes_data:
-        ligne_id = ligne_data.get('id')
-        try:
-            ligne = LigneFacture.objects.get(id=ligne_id, facture=facture)
-            ligne.nom_produit = ligne_data.get('produit', ligne.nom_produit)
-            ligne.description = ligne_data.get('description', ligne.description)
-            ligne.quantite = ligne_data.get('quantite', ligne.quantite)
-            ligne.prix_unitaire = ligne_data.get('prix_unitaire', ligne.prix_unitaire)
-            ligne.tva = ligne_data.get('tva', ligne.tva)
-            ligne.save()
-        except LigneFacture.DoesNotExist:
-            LigneFacture.objects.create(
-                facture=facture,
-                nom_produit=ligne_data.get('produit'),
-                description=ligne_data.get('description'),
-                quantite=ligne_data.get('quantite'),
-                prix_unitaire=ligne_data.get('prix_unitaire'),
-                tva=ligne_data.get('tva')
-            )
-
-    return Response({'success': 'Facture mise à jour avec succès!'}, status=status.HTTP_200_OK)
-
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def desarchiver_facture(request, facture_id):
+    facture = Facture.objects.get(id=facture_id)
+    if facture:
+        facture.archivee = False
+        facture.save()
+        return Response({'success': 'Facture mise à jour avec succès!'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Facture non trouvée'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['POST'])

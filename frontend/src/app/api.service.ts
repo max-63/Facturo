@@ -21,6 +21,7 @@ export interface Facture {
   date_echeance: string;
   statut: string;
   client_id: number;
+  archivee: boolean;
 }
 
 export interface Depense {
@@ -102,4 +103,23 @@ export class ApiService {
 
     return this.http.post<any>(url, facture, { headers });
   }
+
+  archiver(id: number): Observable<any> {
+    const url = `${this.apiUrl}/archiver_facture/${id}/`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post<any>(url, {}, { headers }); // <= ici les headers sont dans les options
+  }
+
+  desarchiverFacture(id: number): Observable<any> {
+    const url = `${this.apiUrl}/desarchiver_facture/${id}/`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post<any>(url, {}, { headers }); // <= ici les headers sont dans les options
+  }
+
 }

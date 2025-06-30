@@ -1,58 +1,80 @@
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px;
-    height: 100vh;
-    background-color: #3498db;
-    padding: 20px;
-    z-index: 9999;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Ombre pour donner de la profondeur */
-    border-radius: 0 10px 10px 0; /* Arrondir les bords de la sidebar */
-    transition: all 0.3s ease; /* Transition fluide pour le changement de taille et d'effet hover */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #3498db;
+  padding: 20px 15px;
+  overflow-y: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 10px 10px 0;
 }
 
 .div-btn-sidebar {
-    width: 100%;
-    background-color: #3498db;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition fluide pour hover */
-}
-
-.div-btn-sidebar a {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 10px 0;
-    transition: color 0.3s ease;
-}
-
-.div-btn-sidebar a:hover {
-    color: #f1c40f; /* Couleur au survol */
-    transform: translateX(10px);
+  background-color: #3498db;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  position: relative;
 }
 
 .div-btn-sidebar:hover {
-    background-color: #2980b9; /* Couleur de fond du bouton lors du survol */
-    cursor: pointer;
-    transform: scale(1.05); /* Effet de zoom lors du survol */
+  background-color: #2980b9;
+  transform: scale(1.03);
 }
 
-.sidebar .div-btn-sidebar:last-child {
-    margin-bottom: 0; /* Enlever la marge pour le dernier élément */
+.div-btn-sidebar a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  padding: 12px 10px;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
-/* Optionnel : pour ajouter une animation de fermeture au survol */
-.sidebar:hover {
-    width: 270px; /* Élargir la sidebar au survol */
+.div-btn-sidebar a i {
+  margin-right: 10px;
+  min-width: 20px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.div-btn-sidebar a:hover {
+  color: #f1c40f;
+  transform: translateX(8px);
+}
+
+/* Par défaut, sous-menu caché */
+.submenu {
+  display: none;
+  flex-direction: column;
+  margin-left: 30px;
+  margin-top: 5px;
+}
+
+/* Affiche sous-menu au survol */
+.with-submenu:hover .submenu {
+  display: flex;
+}
+
+/* Si la classe active est présente (on est dans /factures), affiche sous-menu */
+.with-submenu.active .submenu {
+  display: flex;
+}
+
+.submenu a {
+  font-size: 15px;
+  color: #ecf0f1;
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.submenu a:hover {
+  color: #f1c40f;
+  transform: translateX(6px);
 }
 

@@ -27,24 +27,24 @@
           </thead> -->
           <tbody>
             <ng-container *ngFor="let facture of factures">
-              <!-- Ligne principale : Facture -->
-              <ng-container *ngIf="facture.archivee === false">
-                <tr class="table-primary" (dblclick)="facture.statut === 'brouillon' && onDbClickFacture(facture.id)">
+              <ng-container *ngIf="!facture.archivee && isDateExceeded(facture.date_echeance) && facture.statut === 'payée'">
+                <!-- Ligne principale : Facture -->
+                <tr class="table-primary">
                   <td>{{ facture.numero }}</td>
                   <td>{{ getMontantTotalFacture(facture.id).toFixed(2) }} € HT</td>
                   <td>{{ getMontantTtcFacture(facture.id).toFixed(2) }} € TTC</td>
                   <td>Date d'émission : {{ facture.date_emission }}</td>
                   <td>Date d'écheance : {{ facture.date_echeance }}</td>
                   <td [ngStyle]="{
-                      color:
-                        facture.statut === 'payée'
-                          ? 'green'
-                          : facture.statut === 'envoyée'
-                          ? 'orange'
-                          : facture.statut === 'brouillon'
-                          ? 'red'
-                          : 'black'
-                    }">{{ facture.statut }}</td>
+                    color:
+                      facture.statut === 'payée'
+                        ? 'green'
+                        : facture.statut === 'envoyée'
+                        ? 'orange'
+                        : facture.statut === 'brouillon'
+                        ? 'red'
+                        : 'black'
+                  }">{{ facture.statut }}</td>
                   <td>{{ getclientNamebyId(facture.client_id) }}</td>
                   <td
                     *ngIf="facture.statut === 'payée'"
@@ -56,8 +56,6 @@
                   >
                     <i class="fa fa-archive"></i> Archiver
                   </td>
-
-                  <td *ngIf="facture.statut !== 'payée'">Archivage après paiement</td>
                 </tr>
 
                 <!-- Sous-lignes : Lignes de la facture -->
@@ -90,7 +88,7 @@
                     </table>
                   </td>
                 </tr>
-              </ng-container>
+                </ng-container>
             </ng-container>
           </tbody>
         </table>

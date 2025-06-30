@@ -1,22 +1,54 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+
 <div class="sidebar">
 
-    <div class="div-btn-sidebar">
-        <a routerLink="/dashboard">Acceuil</a><br>
+  <div class="div-btn-sidebar">
+    <a routerLink="/dashboard">
+      <i class="fas fa-home"></i> Accueil
+    </a>
+  </div>
+
+  <div class="div-btn-sidebar">
+    <a routerLink="/clients">
+      <i class="fas fa-users"></i> Clients
+    </a>
+  </div>
+
+  <div class="div-btn-sidebar with-submenu" [class.active]="IsInFactureURL()">
+    <a routerLink="/factures">
+      <i class="fas fa-file-invoice"></i> Factures
+    </a>
+    <div class="submenu">
+      <a routerLink="/factures">📄 Toutes les factures</a>
+      <a routerLink="/factures/impayees">❌ Factures impayées</a>
+      <a routerLink="/factures/envoyees">📨 Factures envoyées</a>
+      <a routerLink="/factures/payees">✅ Factures payées</a>
+      <a routerLink="/factures/brouillon">📬 Factures brouillon</a>
+      <a routerLink="/factures/archivees">📦 Factures archivées</a>
     </div>
-    <div class="div-btn-sidebar">
-        <a routerLink="/clients">Clients</a><br>
-    </div>
-    <div class="div-btn-sidebar">
-        <a routerLink="/factures">Factures</a><br>
-    </div>
-    <div class="div-btn-sidebar">
-        <a routerLink="/paiements">Paiements</a><br>
-    </div>
-    <div class="div-btn-sidebar">
-        <a routerLink="/depenses">Dépenses</a><br>
-    </div>
-    <div class="div-btn-sidebar">
-        <a routerLink="/entreprises">Entreprises</a><br>
-    </div>
+  </div>
+
+
+
+  <div class="div-btn-sidebar">
+    <a routerLink="/paiements">
+      <i class="fas fa-credit-card"></i> Paiements
+    </a>
+  </div>
+
+  <div class="div-btn-sidebar">
+    <a routerLink="/depenses">
+      <i class="fas fa-wallet"></i> Dépenses
+    </a>
+  </div>
+
+  <div class="div-btn-sidebar">
+    <a routerLink="/entreprises">
+      <i class="fas fa-building"></i> Entreprises
+    </a>
+  </div>
 
 </div>

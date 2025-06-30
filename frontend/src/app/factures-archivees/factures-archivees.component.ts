@@ -9,14 +9,15 @@ import Swal from 'sweetalert2'
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-
 @Component({
-  selector: 'app-factures-page',
-  imports: [RouterModule, SidebarComponent, CommonModule, FormsModule],
-  templateUrl: './factures-page.component.html',
-  styleUrl: './factures-page.component.css',
+  selector: 'app-factures-archivees',
+  imports: [SidebarComponent, FormsModule, CommonModule, RouterModule],
+  templateUrl: './factures-archivees.component.html',
+  styleUrl: './factures-archivees.component.css'
 })
-export class FacturesPageComponent implements OnInit {
+export class FacturesArchiveesComponent {
+
+
   factures: Facture[] = [];
   ligneFactures: LigneFacture[] = [];
   clients: Client[] = [];
@@ -29,15 +30,18 @@ export class FacturesPageComponent implements OnInit {
     this.token = localStorage.getItem('jtw_token');
     if (this.token) {
       this.loadData();
+      const today = new Date();
     } else {
       console.error('token non trouvé dans localStorage.');
     }
 
   }
+  getLignesFactures(facture: Facture): LigneFacture[] {
+    return this.ligneFactures.filter((l) => l.facture_id === facture.id);
+  }
 
-
-  archiver(id: number): void {
-    this.apiService.archiver(id).subscribe({
+  desarchiver(id: number) {
+    this.apiService.desarchiverFacture(id).subscribe({
       next: (res) => {
         console.log('Facture archivée :', res);
         // Optionnel : rafraîchir la liste ici
@@ -49,11 +53,17 @@ export class FacturesPageComponent implements OnInit {
     });
   }
 
+  isDateExceeded(limitDateStr: string): boolean {
+    const today = new Date();
+    const limitDate = new Date(limitDateStr);
 
+    // Remise à zéro de l'heure pour une comparaison juste (on compare que les dates)
+    today.setHours(0, 0, 0, 0);
+    limitDate.setHours(0, 0, 0, 0);
 
-  getLignesFactures(facture: Facture): LigneFacture[] {
-    return this.ligneFactures.filter((l) => l.facture_id === facture.id);
+    return today > limitDate;
   }
+
 
   getclientNamebyId(id: number): string {
     const client = this.clients.find((c) => c.id === id);

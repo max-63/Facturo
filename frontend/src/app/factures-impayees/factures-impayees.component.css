@@ -143,25 +143,3 @@ body {
     /* Bleu */
     color: white;
 }
-
-
-
-
-
-.icon-with-text {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-}
-
-.icon-with-text .hover-text {
-  opacity: 0;
-  margin-left: 8px;
-  transition: opacity 0.3s ease;
-  white-space: nowrap;
-}
-
-.icon-with-text:hover .hover-text {
-  opacity: 1;
-}

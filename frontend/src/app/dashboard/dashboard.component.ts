@@ -8,6 +8,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FacturesPageComponent } from '../factures-page/factures-page.component';
 import { forkJoin } from 'rxjs';
 
+
 Chart.register([
   CategoryScale,
   LineController,
@@ -51,6 +52,12 @@ export class DashboardComponent implements OnInit {
     } else {
       console.error('Username non trouvé dans localStorage.');
     }
+
+    if (localStorage.getItem('notif-success') === 'true') {
+      console.log('Notif success');
+    }
+
+
   }
 
   // Normaliser et enlever les accents
@@ -297,4 +304,5 @@ export class DashboardComponent implements OnInit {
     });
     return monthlyPaiements;
   }
+
 }

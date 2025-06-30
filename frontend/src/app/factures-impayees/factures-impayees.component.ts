@@ -13,10 +13,10 @@ import html2canvas from 'html2canvas';
 @Component({
   selector: 'app-factures-page',
   imports: [RouterModule, SidebarComponent, CommonModule, FormsModule],
-  templateUrl: './factures-page.component.html',
-  styleUrl: './factures-page.component.css',
+  templateUrl: './factures-impayees.component.html',
+  styleUrl: './factures-impayees.component.css',
 })
-export class FacturesPageComponent implements OnInit {
+export class FacturesImpayeesComponent implements OnInit {
   factures: Facture[] = [];
   ligneFactures: LigneFacture[] = [];
   clients: Client[] = [];
@@ -29,31 +29,27 @@ export class FacturesPageComponent implements OnInit {
     this.token = localStorage.getItem('jtw_token');
     if (this.token) {
       this.loadData();
+      const today = new Date();
     } else {
       console.error('token non trouvé dans localStorage.');
     }
 
   }
-
-
-  archiver(id: number): void {
-    this.apiService.archiver(id).subscribe({
-      next: (res) => {
-        console.log('Facture archivée :', res);
-        // Optionnel : rafraîchir la liste ici
-        window.location.reload();
-      },
-      error: (err) => {
-        console.error('Erreur lors de l’archivage :', err);
-      }
-    });
-  }
-
-
-
   getLignesFactures(facture: Facture): LigneFacture[] {
     return this.ligneFactures.filter((l) => l.facture_id === facture.id);
   }
+
+  isDateExceeded(limitDateStr: string): boolean {
+    const today = new Date();
+    const limitDate = new Date(limitDateStr);
+
+    // Remise à zéro de l'heure pour une comparaison juste (on compare que les dates)
+    today.setHours(0, 0, 0, 0);
+    limitDate.setHours(0, 0, 0, 0);
+
+    return today > limitDate;
+  }
+
 
   getclientNamebyId(id: number): string {
     const client = this.clients.find((c) => c.id === id);

@@ -18,4 +18,6 @@ urlpatterns = [
     path('entreprise', getParametresEntreprise, name='get_parametres_entreprise'),
     path('ligne_facture', getLigneFacture, name='get_ligne_facture'),
     path('update_facture/<int:facture_id>/', update_facture, name='update_facture'),
+    path('archiver_facture/<int:facture_id>/', archiver_facture, name="archiver_facture"),
+    path('desarchiver_facture/<int:facture_id>/', desarchiver_facture, name='desarchiver_facture'),
 ]

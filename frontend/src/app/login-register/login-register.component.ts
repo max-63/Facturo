@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { FormsModule } from '@angular/forms'; // Import important pour ngModel
 import { AuthService } from '../auth.service';  // Import du service AuthService
-import Polipop from 'polipop';
 
 @Component({
   selector: 'app-login-register',
@@ -44,8 +43,8 @@ export class LoginRegisterComponent {
         localStorage.setItem('username', response.username);  // Sauvegarder le username dans le localStorage
         localStorage.setItem('jtw_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
-        localStorage.setItem('csrftoken', response.csrf_token)
-        alert('Connexion réussie ✅');
+        localStorage.setItem('csrftoken', response.csrf_token);
+        localStorage.setItem('notif-success', 'true');
 
         this.router.navigate(['/dashboard']);  // Rediriger après la connexion
       },
